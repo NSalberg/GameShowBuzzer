@@ -95,7 +95,7 @@ class _RoomPageState extends State<RoomPage> {
                     //Todo: push buzzer screen
                     Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => BuzzerPage(roomCode: roomCode))
+                        MaterialPageRoute(builder: (context) => BuzzerPage(roomCode: roomCode, name: name,))
                     );
 
                     //Todo: check for server

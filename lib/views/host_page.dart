@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import '../utils/player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:game_show_buzzer/views/buzzer_page.dart';
 class HostPage extends StatefulWidget {
@@ -84,10 +85,10 @@ class _HostPageState extends State<HostPage> {
               ElevatedButton(
                   onPressed: () {
                     //Todo: push buzzer screen
-                    db.collection("room").doc(docID).set(<String,dynamic>{"player": name}, SetOptions(merge: true));
+                    db.collection("room").doc(docID).set(<String,dynamic>{name: <String,dynamic>{'buzzed': false, "name": name,}}, SetOptions(merge: true));
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => BuzzerPage(roomCode: roomCode))
+                      MaterialPageRoute(builder: (context) => BuzzerPage(roomCode: roomCode, name: name,))
                     );
 
                     //Todo: check for server

@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class BuzzerPage extends StatefulWidget {
-  const BuzzerPage({Key? key, required this.roomCode}) : super(key: key);
+  const BuzzerPage({Key? key, required this.roomCode, required this.name}) : super(key: key);
 
   final String roomCode;
+  final String name;
 
   @override
   State<BuzzerPage> createState() => _BuzzerPageState();
@@ -14,22 +15,33 @@ class BuzzerPage extends StatefulWidget {
 
 class _BuzzerPageState extends State<BuzzerPage> {
   FirebaseFirestore db = FirebaseFirestore.instance;
-  String name = '';
+  String docID = "";
+  late DocumentReference docRef;
+
+
+
   @override
   void initState() {
-
     super.initState();
+  }
+  @override
+  void dispose() {
+    db.collection("room").doc(docID).update(<String, dynamic>{widget.name: FieldValue.delete(),});
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(),
-        body: FutureBuilder<QuerySnapshot>(
-            future: db
+        appBar: AppBar(
+          title: Text("Room code: ${widget.roomCode}"),
+
+        ),
+        body: StreamBuilder<QuerySnapshot>(
+            stream: db
                 .collection("room")
                 .where("room code", isEqualTo: widget.roomCode)
-                .get(),
+                .snapshots(),
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               List<Widget> children;
@@ -47,23 +59,38 @@ class _BuzzerPageState extends State<BuzzerPage> {
                 ];
               }
               if (snapshot.hasData) {
-                final docID = snapshot.data!.docs.first.id;
-                final docRef = db.collection("room").doc(docID);
-                docRef.snapshots().listen(
-                  (event) {
-                    print("current data: ${event.data()}");
+                var data = snapshot.data!.docs.first.data() as Map<String, dynamic>;
+                docID = snapshot.data!.docs.first.id;
+                //if someone is buzzed in change the screen
 
-                  },
-                  onError: (error) => print("Listen failed: $error"),
-                );
-                children = <Widget>[
-                  Text("Room code: ${widget.roomCode}"),
-                  Text("Name: $name"),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: const Text("Buzz In"),
-                  )
-                ];
+                if (data["buzzes"] != null){
+                  String buzzedInUser = "";
+                  num earliestBuzz = 8640000000000000000;
+                  data["buzzes"].forEach((key, value) {
+                    if(value < earliestBuzz){
+                      buzzedInUser = key;
+                      earliestBuzz = value;
+                    }
+                  });
+                  children = <Widget>[
+                    Text("${buzzedInUser} buzzed in!"),
+                  ];
+                }else{
+                  children = <Widget>[
+                    Text("Name: ${widget.name}"),
+                    ElevatedButton(
+                      onPressed: () {
+                        db.collection("room").doc(docID).set(<String,dynamic>{widget.name: <String,dynamic>{'buzzed': true, "name": widget.name,}}, SetOptions(merge: true));
+                        db.collection("room").doc(docID).set(<String,dynamic>{"buzzes": <String,dynamic>{widget.name: DateTime.now().microsecondsSinceEpoch}}, SetOptions(merge: true));
+                        Future.delayed(Duration(seconds: 3), (){
+                          db.collection("room").doc(docID).update(<String, dynamic>{"buzzes": FieldValue.delete(),});
+                        });
+                      },
+                      child: const Text("Buzz In"),
+                    )
+                  ];
+                }
+
               } else {
                 children = const <Widget>[
                   SizedBox(
