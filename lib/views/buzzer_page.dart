@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import '../utils/app_colors.dart' as AppColors;
+import '../widgets/buzzer_button.dart';
 
 class BuzzerPage extends StatefulWidget {
   const BuzzerPage({Key? key, required this.roomCode, required this.name}) : super(key: key);
@@ -33,13 +35,13 @@ class _BuzzerPageState extends State<BuzzerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.darkBackground,
         appBar: AppBar(
+          backgroundColor: Colors.transparent,
           title: Text("Room code: ${widget.roomCode}"),
-
         ),
         body: StreamBuilder<QuerySnapshot>(
-            stream: db
-                .collection("room")
+            stream: db.collection("room")
                 .where("room code", isEqualTo: widget.roomCode)
                 .snapshots(),
             builder:
@@ -64,7 +66,6 @@ class _BuzzerPageState extends State<BuzzerPage> {
                 //if someone is buzzed in change the screen
 
                 if (data["buzzes"] != null){
-
                   //find the earliest buzz
                   String buzzedInUser = "";
                   num earliestBuzz = 8640000000000000000;
@@ -75,23 +76,24 @@ class _BuzzerPageState extends State<BuzzerPage> {
                     }
                   });
                   children = <Widget>[
-                    Text("${buzzedInUser} buzzed in!"),
+                        Text("${buzzedInUser} buzzed in!", style: TextStyle(color: Colors.white, fontSize: 45),),
                   ];
                 }else{
                   children = <Widget>[
-                    Text("Name: ${widget.name}"),
-                    ElevatedButton(
+
+                    BuzzerButton(
+                      title: "Buzz in",
+                      colour: AppColors.textField,
+                      size: 300,
                       onPressed: () {
                         db.collection("room").doc(docID).set(<String,dynamic>{"buzzes": <String,dynamic>{widget.name: DateTime.now().microsecondsSinceEpoch}}, SetOptions(merge: true));
                         Future.delayed(Duration(seconds: 5), (){
                           db.collection("room").doc(docID).update(<String, dynamic>{"buzzes": FieldValue.delete(),});
                         });
                       },
-                      child: const Text("Buzz In"),
                     )
                   ];
                 }
-
               } else {
                 children = const <Widget>[
                   SizedBox(
@@ -111,6 +113,7 @@ class _BuzzerPageState extends State<BuzzerPage> {
                   children: children,
                 ),
               );
-            }));
+            })
+    );
   }
 }

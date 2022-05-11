@@ -17,6 +17,7 @@ class _RoomPageState extends State<RoomPage> {
   String name = "";
   FirebaseFirestore db = FirebaseFirestore.instance;
   bool _visible = false;
+  String _error = '';
 
   @override
   Widget build(BuildContext context) {
@@ -91,26 +92,36 @@ class _RoomPageState extends State<RoomPage> {
                 title: "Join",
                 colour: AppColors.textField,
                   onPressed: () async {
-                    var snap = await db.collection("room").where("room code", isEqualTo: roomCode).get();
-                    if(snap.docs.length == 1){
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => BuzzerPage(roomCode: roomCode, name: name,))
-                      );
-                    } else {
+                    if (name == "") {
                       setState(() {
                         _visible = true;
+                        _error = "Invalid name";
                       });
-                    }
-                  },
+                    } else {
+                      var snap = await db.collection("room").where(
+                          "room code", isEqualTo: roomCode).get();
+                      if (snap.docs.length == 1) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) =>
+                                BuzzerPage(roomCode: roomCode, name: name,))
+                        );
+                      } else {
+                        setState(() {
+                          _visible = true;
+                          _error = "Invalid room code";
+                        });
+                      }
+                    };
+                  }
               ),
               Opacity(
                 opacity: _visible ? 1.0 : 0.0,
-                child: const Text(
-                  'Invalid room code',
+                child: Text(
+                  _error,
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontStyle: FontStyle.italic,
                       color: Colors.red,
                     fontSize: 17,

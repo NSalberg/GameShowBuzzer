@@ -16,6 +16,7 @@ class _HostPageState extends State<HostPage> {
   String docID = "";
   String roomCode = "";
   String name = "";
+  bool _visible = false;
 
 
   @override
@@ -91,13 +92,32 @@ class _HostPageState extends State<HostPage> {
                colour: AppColors.textField,
                title: "Join",
                   onPressed: () {
-                    //Todo: push buzzer screen
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => BuzzerPage(roomCode: roomCode, name: name,))
-                    );
-                  },
-             )
+                    if (name != "") {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) =>
+                              BuzzerPage(roomCode: roomCode, name: name,))
+                      );
+                    }else{
+                      setState(() {
+                        _visible = true;
+                      });
+                    }
+                  }
+             ),
+              Opacity(
+                opacity: _visible ? 1.0 : 0.0,
+                child: const Text(
+                  'Invalid name',
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontStyle: FontStyle.italic,
+                    color: Colors.red,
+                    fontSize: 17,
+                  ),
+                ),
+              ),
             ],
           ),
         )
