@@ -28,7 +28,7 @@ class _HostPageState extends State<HostPage> {
   void dispose(){
     db.collection("room")
         .doc(docID)
-        .delete()
+        .set(<String,dynamic>{"room code": roomCode,"open": false })
         .then((value) => print("room: $roomCode deleted"));
     super.dispose();
   }
@@ -43,7 +43,7 @@ class _HostPageState extends State<HostPage> {
       print("Room code $roomCode");
       print("DocumentSnapshot added with ID: ${doc.id}");
     }) .catchError((error) => print("Failed to add user: $error"));
-    db.collection("room").doc(docID).set(<String,dynamic>{"room code": roomCode});
+    db.collection("room").doc(docID).set(<String,dynamic>{"room code": roomCode,"open": true });
   }
 
 

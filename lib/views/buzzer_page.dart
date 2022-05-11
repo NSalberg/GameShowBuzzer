@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'closed_room.dart';
 import '../utils/app_colors.dart' as AppColors;
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:game_show_buzzer/ad_helper.dart';
@@ -90,6 +91,17 @@ class _BuzzerPageState extends State<BuzzerPage> {
           if (snapshot.hasData) {
             var data = snapshot.data!.docs.first.data() as Map<String, dynamic>;
             docID = snapshot.data!.docs.first.id;
+
+            if(data["open"] == false){
+              myCallback(() {
+                Navigator.pop(context, true);
+                Navigator.push(
+                  context,
+                    MaterialPageRoute(builder: (context) =>
+                    const ClosedRoom())
+                );
+              });
+            }
             //if someone is buzzed in change the screen
             if (data["buzzes"] != null ){
               //find the earliest buzz
@@ -105,17 +117,26 @@ class _BuzzerPageState extends State<BuzzerPage> {
                 }
               });
               children = <Widget>[
-                Text("$buzzedInUser buzzed in!", style: const TextStyle(color: Colors.white, fontSize: 45),),
+                Text(
+                  buzzedInUser,
+                  style: const TextStyle(color: Colors.white, fontSize: 55),
+                  textAlign: TextAlign.center,
+                ),
+                const Text(
+                  "buzzed in!",
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                  textAlign: TextAlign.center,
+                ),
               ];
             }else{
               children = <Widget>[
                 BuzzerButton(
-                  title: "Buzz in",
-                  colour: AppColors.textField,
+                  title: "Buzz",
+                  colour: AppColors.lightAccent,
                   size: 300,
                   onPressed: () async {
                     await db.collection("room").doc(docID).set(<String,dynamic>{"buzzes": <String,dynamic>{widget.name: FieldValue.serverTimestamp(), }}, SetOptions(merge: true));
-                    Future.delayed(Duration(seconds: 5), (){
+                    Future.delayed(Duration(seconds: 10), (){
                       db.collection("room").doc(docID).update(<String, dynamic>{"buzzes": FieldValue.delete(),});
                     });
                   },
@@ -158,5 +179,11 @@ class _BuzzerPageState extends State<BuzzerPage> {
   }
   Future<InitializationStatus> _initGoogleMobileAds() {
     return MobileAds.instance.initialize();
+  }
+
+  void myCallback(Function callback) {
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      callback();
+    });
   }
 }
