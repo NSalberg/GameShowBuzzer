@@ -18,6 +18,7 @@ class _RoomPageState extends State<RoomPage> {
   FirebaseFirestore db = FirebaseFirestore.instance;
   bool _visible = false;
   String _error = '';
+  final TextEditingController roomController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +42,16 @@ class _RoomPageState extends State<RoomPage> {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: TextFormField(
+                    controller: roomController,
                     cursorColor: Colors.white,
                     style: const TextStyle(color: Colors.white),
                     onChanged: (value) {
-                      roomCode = value;
+                      roomCode = value.toUpperCase();
+                      //makes the display all uppercase
+                      roomController.value =TextEditingValue(
+                        text: value.toUpperCase(),
+                        selection: roomController.selection,
+                      );
                     },
                     decoration: const InputDecoration(
                       border: InputBorder.none,

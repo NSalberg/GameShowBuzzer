@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:game_show_buzzer/idProvider.dart';
 import 'package:game_show_buzzer/widgets/rounded_button.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'views/room_page.dart';
 import 'views/host_page.dart';
 import 'views/buzzer_page.dart';
@@ -13,6 +14,7 @@ import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
