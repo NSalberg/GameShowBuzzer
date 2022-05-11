@@ -80,7 +80,7 @@ class _HostPageState extends State<HostPage> {
                       labelStyle: TextStyle(color: Colors.white, fontSize: 16),
                       focusedBorder: OutlineInputBorder(
                         borderSide:
-                        BorderSide(color: Colors.indigo, width: 1.0),
+                        BorderSide(color: Colors.white, width: 1.0),
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       ),
                     ),
@@ -92,7 +92,6 @@ class _HostPageState extends State<HostPage> {
                title: "Join",
                   onPressed: () {
                     //Todo: push buzzer screen
-                    db.collection("room").doc(docID).set(<String,dynamic>{name: <String,dynamic>{'buzzed': false, "name": name,}}, SetOptions(merge: true));
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => BuzzerPage(roomCode: roomCode, name: name,))
