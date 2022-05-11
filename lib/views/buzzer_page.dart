@@ -64,6 +64,7 @@ class _BuzzerPageState extends State<BuzzerPage> {
                 //if someone is buzzed in change the screen
 
                 if (data["buzzes"] != null){
+                  //find the earliest buzz
                   String buzzedInUser = "";
                   num earliestBuzz = 8640000000000000000;
                   data["buzzes"].forEach((key, value) {
@@ -80,9 +81,8 @@ class _BuzzerPageState extends State<BuzzerPage> {
                     Text("Name: ${widget.name}"),
                     ElevatedButton(
                       onPressed: () {
-                        db.collection("room").doc(docID).set(<String,dynamic>{widget.name: <String,dynamic>{'buzzed': true, "name": widget.name,}}, SetOptions(merge: true));
                         db.collection("room").doc(docID).set(<String,dynamic>{"buzzes": <String,dynamic>{widget.name: DateTime.now().microsecondsSinceEpoch}}, SetOptions(merge: true));
-                        Future.delayed(Duration(seconds: 3), (){
+                        Future.delayed(Duration(seconds: 5), (){
                           db.collection("room").doc(docID).update(<String, dynamic>{"buzzes": FieldValue.delete(),});
                         });
                       },
