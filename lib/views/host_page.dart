@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:game_show_buzzer/widgets/rounded_button.dart';
+import '../utils/app_colors.dart' as AppColors;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:game_show_buzzer/views/buzzer_page.dart';
 class HostPage extends StatefulWidget {
@@ -37,8 +39,6 @@ class _HostPageState extends State<HostPage> {
       setState(() {
         roomCode = docID.substring(docID.length - 4).toUpperCase();
       });
-
-
       print("Room code $roomCode");
       print("DocumentSnapshot added with ID: ${doc.id}");
     }) .catchError((error) => print("Failed to add user: $error"));
@@ -49,21 +49,27 @@ class _HostPageState extends State<HostPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(),
+      backgroundColor: AppColors.darkBackground,
+        appBar: AppBar(
+          title: Text("Code: $roomCode", ),
+          backgroundColor: Colors.transparent,
+        ),
         body: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("Room Code: $roomCode"),
-              Text("Name"),
+              Padding(padding: EdgeInsets.all(20)),
+              Text("Room Code",style: TextStyle(color: Colors.white, fontSize: 16),),
+              Text(roomCode, style: TextStyle(color: Colors.white, fontSize: 75),),
               Padding(
                 padding: EdgeInsets.all(10),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.textField,
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: TextFormField(
+                    cursorColor: Colors.white,
+                    style: const TextStyle(color: Colors.white),
                     onChanged: (value) {
                       name = value;
                     },
@@ -71,7 +77,7 @@ class _HostPageState extends State<HostPage> {
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.only(left: 20.0),
                       labelText: 'Enter your name',
-                      labelStyle: TextStyle(color: Colors.indigo, fontSize: 16),
+                      labelStyle: TextStyle(color: Colors.white, fontSize: 16),
                       focusedBorder: OutlineInputBorder(
                         borderSide:
                         BorderSide(color: Colors.indigo, width: 1.0),
@@ -81,7 +87,9 @@ class _HostPageState extends State<HostPage> {
                   ),
                 ),
               ),
-              ElevatedButton(
+             RoundedButton(
+               colour: AppColors.textField,
+               title: "Join",
                   onPressed: () {
                     //Todo: push buzzer screen
                     db.collection("room").doc(docID).set(<String,dynamic>{name: <String,dynamic>{'buzzed': false, "name": name,}}, SetOptions(merge: true));
@@ -89,10 +97,8 @@ class _HostPageState extends State<HostPage> {
                       context,
                       MaterialPageRoute(builder: (context) => BuzzerPage(roomCode: roomCode, name: name,))
                     );
-
-                    //Todo: check for server
                   },
-                  child: Text("JOIN"))
+             )
             ],
           ),
         )
