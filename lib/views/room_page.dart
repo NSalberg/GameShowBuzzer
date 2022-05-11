@@ -52,7 +52,7 @@ class _RoomPageState extends State<RoomPage> {
                       labelStyle: TextStyle(color: Colors.white, fontSize: 16),
                       focusedBorder: OutlineInputBorder(
                         borderSide:
-                        BorderSide(color: Colors.indigo, width: 1.0),
+                        BorderSide(color: Colors.white, width: 1.0),
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       ),
                     ),
@@ -80,7 +80,7 @@ class _RoomPageState extends State<RoomPage> {
                       labelStyle: TextStyle(color: Colors.white, fontSize: 16),
                       focusedBorder: OutlineInputBorder(
                         borderSide:
-                        BorderSide(color: Colors.indigo, width: 1.0),
+                        BorderSide(color: Colors.white, width: 1.0),
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       ),
                     ),
