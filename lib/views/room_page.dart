@@ -6,12 +6,6 @@ import 'buzzer_page.dart';
 
 
 
-// Create a new user with a first and last name
-final user = <String, dynamic>{
-  "first": "Ada",
-  "last": "Lovelace",
-  "born": 1815
-};
 
 
 class RoomPage extends StatefulWidget {
@@ -88,10 +82,6 @@ class _RoomPageState extends State<RoomPage> {
               ),
               ElevatedButton(
                   onPressed: () {
-                    db.collection("room")
-                        .add(user)
-                        .then((value){print("user added");})
-                        .catchError((error) => print("Failed to add user: $error"));
                     //Todo: push buzzer screen
                     Navigator.push(
                         context,
