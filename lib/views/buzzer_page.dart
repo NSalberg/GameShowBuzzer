@@ -64,7 +64,7 @@ class _BuzzerPageState extends State<BuzzerPage> {
                 //if someone is buzzed in change the screen
 
                 if (data["buzzes"] != null){
-                  //test
+
                   //find the earliest buzz
                   String buzzedInUser = "";
                   num earliestBuzz = 8640000000000000000;
