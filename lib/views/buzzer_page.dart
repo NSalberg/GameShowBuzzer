@@ -78,7 +78,7 @@ class _BuzzerPageState extends State<BuzzerPage> {
                     }
                   });
                   children = <Widget>[
-                        Text("${buzzedInUser} buzzed in!", style: TextStyle(color: Colors.white, fontSize: 45),),
+                        Text("$buzzedInUser buzzed in!", style: const TextStyle(color: Colors.white, fontSize: 45),),
                   ];
                 }else{
                   children = <Widget>[
