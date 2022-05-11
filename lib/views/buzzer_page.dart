@@ -86,7 +86,7 @@ class _BuzzerPageState extends State<BuzzerPage> {
                       colour: AppColors.textField,
                       size: 300,
                       onPressed: () {
-                        db.collection("room").doc(docID).set(<String,dynamic>{"buzzes": <String,dynamic>{widget.name: DateTime.now().microsecondsSinceEpoch}}, SetOptions(merge: true));
+                        db.collection("room").doc(docID).set(<String,dynamic>{"buzzes": <String,dynamic>{widget.name: FieldValue.serverTimestamp()}}, SetOptions(merge: true));
                         Future.delayed(Duration(seconds: 5), (){
                           db.collection("room").doc(docID).update(<String, dynamic>{"buzzes": FieldValue.delete(),});
                         });
