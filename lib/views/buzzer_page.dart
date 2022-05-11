@@ -63,16 +63,18 @@ class _BuzzerPageState extends State<BuzzerPage> {
               if (snapshot.hasData) {
                 var data = snapshot.data!.docs.first.data() as Map<String, dynamic>;
                 docID = snapshot.data!.docs.first.id;
-                //if someone is buzzed in change the screen
-
-                if (data["buzzes"] != null){
+                //if someone is buzzed in change the screen and check for some weird firebase error
+                if (data["buzzes"] != null &&  data["buzzes"][widget.name]!= null ){
                   //find the earliest buzz
                   String buzzedInUser = "";
                   num earliestBuzz = 8640000000000000000;
                   data["buzzes"].forEach((key, value) {
-                    if(value < earliestBuzz){
-                      buzzedInUser = key;
-                      earliestBuzz = value;
+                    if (value != null) {
+                      Timestamp timeStamp = value;
+                      if (timeStamp.microsecondsSinceEpoch < earliestBuzz) {
+                        buzzedInUser = key;
+                        earliestBuzz = timeStamp.microsecondsSinceEpoch;
+                      }
                     }
                   });
                   children = <Widget>[
@@ -80,13 +82,12 @@ class _BuzzerPageState extends State<BuzzerPage> {
                   ];
                 }else{
                   children = <Widget>[
-
                     BuzzerButton(
                       title: "Buzz in",
                       colour: AppColors.textField,
                       size: 300,
-                      onPressed: () {
-                        db.collection("room").doc(docID).set(<String,dynamic>{"buzzes": <String,dynamic>{widget.name: FieldValue.serverTimestamp()}}, SetOptions(merge: true));
+                      onPressed: () async {
+                        await db.collection("room").doc(docID).set(<String,dynamic>{"buzzes": <String,dynamic>{widget.name: FieldValue.serverTimestamp(), }}, SetOptions(merge: true));
                         Future.delayed(Duration(seconds: 5), (){
                           db.collection("room").doc(docID).update(<String, dynamic>{"buzzes": FieldValue.delete(),});
                         });
