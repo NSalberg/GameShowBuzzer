@@ -28,8 +28,8 @@ class _HostPageState extends State<HostPage> {
   void dispose(){
     db.collection("room")
         .doc(docID)
-        .set(<String,dynamic>{"room code": roomCode,"open": false })
-        .then((value) => print("room: $roomCode deleted"));
+        .set(<String,dynamic>{"open": false },SetOptions(merge: true))
+        .then((value) => print("room: $roomCode closed"));
     super.dispose();
   }
   Future<void> createRoom() async{
@@ -40,10 +40,14 @@ class _HostPageState extends State<HostPage> {
       setState(() {
         roomCode = docID.substring(docID.length - 4).toUpperCase();
       });
-      print("Room code $roomCode");
-      print("DocumentSnapshot added with ID: ${doc.id}");
-    }) .catchError((error) => print("Failed to add user: $error"));
-    db.collection("room").doc(docID).set(<String,dynamic>{"room code": roomCode,"open": true });
+    }) .catchError((error) => print("Failed to create room"));
+    db.collection("room").doc(docID).set(
+        <String,dynamic>{
+          "room code": roomCode,
+          "open": true,
+          "timestamp": FieldValue.serverTimestamp(),
+        }
+        );
   }
 
 

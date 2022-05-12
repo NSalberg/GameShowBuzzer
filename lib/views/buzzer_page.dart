@@ -51,7 +51,6 @@ class _BuzzerPageState extends State<BuzzerPage> {
   }
   @override
   void dispose() {
-    db.collection("room").doc(docID).update(<String, dynamic>{widget.name: FieldValue.delete(),});
     super.dispose();
   }
 
